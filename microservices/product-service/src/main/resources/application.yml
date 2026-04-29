@@ -1,0 +1,105 @@
+spring:
+  application:
+    name: product-service
+  mongodb:
+    host: localhost
+    port: 27017
+    database: product-db
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+  cloud:
+    function:
+      definition: messageProcessor
+    stream:
+      default-binder: kafka
+      default:
+        content-type: application/json
+      bindings:
+        messageProcessor-in-0:
+          destination: products
+          group: productsGroup
+          consumer:
+            max-attempts: 3
+            back-off-initial-interval: 500
+            back-off-max-interval: 1000
+            back-off-multiplier: 2.0
+      kafka:
+        bindings:
+          messageProcessor-in-0:
+            consumer:
+              enable-dlq: true
+
+app.eureka-server: localhost
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${app.eureka-server}:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5
+
+
+
+server:
+  port: 7002
+
+management:
+  endpoint:
+    health:
+      show-details: ALWAYS
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+---
+spring.config.activate.on-profile: docker
+
+app.eureka-server: eureka
+
+server.port: 8080
+spring.mongodb.host: mongodb
+spring.cloud.stream.kafka.binder.brokers: kafka
+
+---
+spring.config.activate.on-profile: streaming_partitioned
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        messageProcessor-in-0:
+          consumer:
+            partitioned: true
+            instance-count: 2
+
+---
+spring.config.activate.on-profile: streaming_instance_0
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        messageProcessor-in-0:
+          consumer:
+            instance-index: 0
+
+---
+spring.config.activate.on-profile: streaming_instance_1
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        messageProcessor-in-0:
+          consumer:
+            instance-index: 1
+
+---
+spring.config.activate.on-profile: kafka
+
+spring.kafka.bootstrap-servers: kafka:9092
+spring.cloud.stream.kafka.binder.replication-factor: 1

@@ -1,0 +1,153 @@
+services:
+  product:
+    build: microservices/product-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+      - JAVA_OPTS=-Xms256m -Xmx256m
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  # product-p1:
+  #   build: microservices/product-service
+  #   mem_limit: 512m
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
+  #   depends_on:
+  #     mongodb:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_healthy
+
+  recommendation:
+    build: microservices/recommendation-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+      - JAVA_OPTS=-Xms256m -Xmx256m
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  # recommendation-p1:
+  #   build: microservices/recommendation-service
+  #   mem_limit: 512m
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
+  #   depends_on:
+  #     mongodb:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_healthy
+
+  review:
+    build: microservices/review-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+      - JAVA_OPTS=-Xms256m -Xmx256m
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  # review-p1:
+  #   build: microservices/review-service
+  #   mem_limit: 512m
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     kafka:
+  #       condition: service_healthy
+
+  product-composite:
+    build: microservices/product-composite-service
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,kafka
+      - JAVA_OPTS=-Xms256m -Xmx256m
+    depends_on:
+      kafka:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+
+  mongodb:
+    image: mongo:latest
+    mem_limit: 512m
+    ports:
+      - "27017:27017"
+    command: mongod
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  postgres:
+    image: postgres:latest
+    mem_limit: 512m
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=pwd
+      - POSTGRES_DB=review-db
+      - POSTGRES_USER=user
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d review-db"]
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+  kafka:
+    image: apache/kafka:latest
+    restart: always
+    mem_limit: 1024m
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_HEAP_OPTS=-Xms512m -Xmx512m
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+      start_period: 30s  # ← give Kafka more time to fully stabilize
+
+  eureka:
+    build: spring-cloud/eureka-server
+    mem_limit: 512m
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
