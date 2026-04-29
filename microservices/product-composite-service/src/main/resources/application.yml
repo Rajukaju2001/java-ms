@@ -2,6 +2,8 @@ spring:
   application:
     name: product-composite-service
 
+server.forward-headers-strategy: framework
+
 scalar:
   enabled: true
   url: /openapi/v3/api-docs
@@ -14,6 +16,7 @@ springdoc:
   api-docs.path: /openapi/v3/api-docs
   packagesToScan: com.example.product_composite_service
   pathsToMatch: /**
+    
 
 app.eureka-server: localhost
 

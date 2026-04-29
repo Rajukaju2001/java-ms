@@ -15,6 +15,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
@@ -50,6 +51,7 @@ public class ProductCompositeServiceApplication {
 	@Bean
 	public OpenAPI getOpenApiDocumentation() {
 		return new OpenAPI()
+				.addServersItem(new Server().url("/"))
 				.info(new Info().title(apiTitle)
 						.description(apiDescription)
 						.version(apiVersion)
