@@ -26,13 +26,18 @@ import com.example.api.core.recommendation.Recommendation;
 import com.example.api.core.review.Review;
 import com.example.api.exceptions.InvalidInputException;
 import com.example.api.exceptions.NotFoundException;
-import com.example.product_composite_service.product.services.ProductCompositeIntegration;
+import com.example.product_composite_service.services.ProductCompositeIntegration;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @AutoConfigureWebTestClient
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT ,properties={"eureka.client.enabled=false"})
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT ,
+    classes = {TestSecurityConfig.class},
+    properties = {
+    "spring.security.oauth2.resourceserver.jwt.issuer-uri=",
+    "spring.main.allow-bean-definition-overriding=true",
+    "eureka.client.enabled=false"})
 class ProductCompositeServiceApplicationTests {
 
   private static final int PRODUCT_ID_OK = 1;

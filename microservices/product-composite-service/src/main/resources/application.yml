@@ -16,14 +16,31 @@ springdoc:
   api-docs.path: /openapi/v3/api-docs
   packagesToScan: com.example.product_composite_service
   pathsToMatch: /**
+  swagger-ui:
+    oauth2RedirectUrl: https://localhost:8443/openapi/swagger-ui/oauth2-redirect.html
+    oauth:
+      clientId: writer
+      clientSecret: secret-writer
+      # useBasicAuthenticationWithAccessCodeGrant: true
+      use-pkce-with-authorization-code-grant: true
+  oAuthFlow:
+    authorizationUrl: https://localhost:8443/oauth2/authorize
+    tokenUrl: https://localhost:8443/oauth2/token
     
 
 app.eureka-server: localhost
+app.auth-server: localhost
+
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://localhost:8443
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://auth-server:9999/oauth2/jwks
+
+app.eureka-username: u
+app.eureka-password: p
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${app.eureka-server}:8761/eureka/
+      defaultZone: "http://${app.eureka-username}:${app.eureka-password}@${app.eureka-server}:8761/eureka/"
     initialInstanceInfoReplicationIntervalSeconds: 5
     registryFetchIntervalSeconds: 5
   instance:
@@ -158,6 +175,8 @@ app:
 spring.cloud.stream.kafka.binder.brokers: kafka
 spring.kafka.bootstrap-servers: kafka:9092
 
+# spring.security.oauth2.resourceserver.jwt.issuer-uri: http://auth-server:9999
+
 ---
 spring.config.activate.on-profile: streaming_partitioned
 
@@ -185,3 +204,5 @@ spring.config.activate.on-profile: kafka
 spring.cloud.stream.default-binder: kafka
 spring.kafka.bootstrap-servers: kafka:9092
 spring.cloud.stream.kafka.binder.replication-factor: 1
+
+# app.auth-server: auth-server

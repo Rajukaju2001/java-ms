@@ -145,7 +145,7 @@ services:
     ports:
       - "8761:8761"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://u:p@localhost:8761/actuator/health"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -158,7 +158,19 @@ services:
     ports:
       - "8443:8443"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "-k", "-f", "https://localhost:8443/actuator/health"]
       interval: 5s
       timeout: 5s
       retries: 20
+  auth-server:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    build: spring-cloud/authorization-server
+    ports:
+      - "9999:9999"
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:9999/actuator/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 60

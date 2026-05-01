@@ -7,39 +7,78 @@ app.eureka-server: localhost
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${app.eureka-server}:8761/eureka/
+      defaultZone: "http://${app.eureka-username}:${app.eureka-password}@${app.eureka-server}:8761/eureka/"
     initialInstanceInfoReplicationIntervalSeconds: 5
     registryFetchIntervalSeconds: 5
   instance:
     leaseRenewalIntervalInSeconds: 5
     leaseExpirationDurationInSeconds: 5
 
-server:
-  ssl:
-    bundle: gateway
+app:
+  eureka-username: u
+  eureka-password: p
+  auth-server: localhost
+
+server.ssl:
+  key-store-type: PKCS12
+  key-store: classpath:keystore/edge.p12
+  key-store-password: password
+  key-alias: localhost
 
 spring:
   ssl:
     bundle:
       jks:
-        gateway: 
+        gateway:
           key:
             alias: localhost
           keystore:
             type: PKCS12
             location: classpath:keystore/edge.p12
             password: password
-           
+
   cloud:
     gateway:
       server:
         webflux:
+          forwarded:
+            by:
+              enabled: true
+          trusted-proxies: .*
           x-forwarded:
             host-enabled: true
             port-enabled: true
             prefix-enabled: true
             proto-enabled: true
           routes:
+            - id: oauth2-server
+              uri: lb://auth-server
+              predicates:
+                - Path=/oauth2/**
+              filters:
+                - PreserveHostHeader
+
+            - id: oauth2-login
+              uri: lb://auth-server
+              predicates:
+                - Path=/login/**
+              filters:
+                - PreserveHostHeader
+
+            - id: oauth2-error
+              uri: lb://auth-server
+              predicates:
+                - Path=/error/**
+              filters:
+                - PreserveHostHeader
+
+            - id: oauth2-well-known
+              uri: lb://auth-server
+              predicates:
+                - Path=/.well-known/**
+              filters:
+                - PreserveHostHeader
+
             - id: product-composite
               uri: lb://product-composite-service
               predicates:
@@ -96,6 +135,8 @@ management.endpoint.gateway.enabled: true
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
 
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://localhost:8443
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://auth-server:9999/oauth2/jwks
 logging:
   level:
     root: INFO
@@ -106,3 +147,4 @@ logging:
 spring.config.activate.on-profile: docker
 
 app.eureka-server: eureka
+# app.auth-server: auth-server

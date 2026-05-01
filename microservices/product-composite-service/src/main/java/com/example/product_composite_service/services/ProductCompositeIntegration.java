@@ -1,4 +1,4 @@
-package com.example.product_composite_service.product.services;
+package com.example.product_composite_service.services;
 
 import com.example.api.core.product.Product;
 import com.example.api.core.product.ProductService;

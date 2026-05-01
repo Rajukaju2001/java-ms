@@ -22,13 +22,14 @@ import com.example.api.core.recommendation.Recommendation;
 import com.example.api.core.review.Review;
 import com.example.api.exceptions.InvalidInputException;
 import com.example.api.exceptions.NotFoundException;
-import com.example.product_composite_service.product.services.ProductCompositeIntegration;
+import com.example.product_composite_service.services.ProductCompositeIntegration;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest(
   webEnvironment = RANDOM_PORT,
+  classes = {TestSecurityConfig.class},
   properties = {"spring.main.allow-bean-definition-overriding=true", "eureka.client.enabled=false"})
 @Import({TestChannelBinderConfiguration.class})
 @AutoConfigureWebTestClient
