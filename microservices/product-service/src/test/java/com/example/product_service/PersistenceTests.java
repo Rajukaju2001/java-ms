@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @Import(TestcontainersConfiguration.class)
-@DataMongoTest
+@DataMongoTest(properties = {"spring.cloud.config.enabled=false"})
 public class PersistenceTests {
 
     @Autowired

@@ -22,7 +22,7 @@ public class SecurityConfig {
             .authorizeExchange(exchanges -> exchanges
                 .pathMatchers("/headerrouting/**", "/actuator/**", "/eureka/**", 
                               "/oauth2/**", "/login/**", "/error/**", 
-                              "/openapi/**", "/webjars/**").permitAll()
+                              "/openapi/**", "/webjars/**", "/config/**").permitAll()
                 .anyExchange().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

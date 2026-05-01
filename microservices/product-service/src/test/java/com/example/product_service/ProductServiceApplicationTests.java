@@ -27,7 +27,7 @@ import com.example.api.exceptions.InvalidInputException;
 import com.example.product_service.persistence.ProductRepository;
 
 @Import(TestcontainersConfiguration.class)
-@SpringBootTest(webEnvironment = RANDOM_PORT,properties = {"eureka.client.enabled=false"})
+@SpringBootTest(webEnvironment = RANDOM_PORT,properties = {"eureka.client.enabled=false",   "spring.cloud.config.enabled=false"})
 @AutoConfigureWebTestClient
 class ProductServiceApplicationTests {
 

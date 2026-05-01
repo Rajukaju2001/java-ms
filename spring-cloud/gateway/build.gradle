@@ -22,8 +22,7 @@ ext {
 }
 
 dependencies {
-	// Source: https://mvnrepository.com/artifact/org.webjars/swagger-ui
-	implementation 'org.webjars:swagger-ui:5.32.5'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'

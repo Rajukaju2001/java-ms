@@ -28,7 +28,7 @@ import com.example.recommendation_service.persistence.RecommendationRepository;
 
 
 @Import(TestcontainersConfiguration.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = {"eureka.client.enabled=false"})
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
 @AutoConfigureWebTestClient
 class RecommendationServiceApplicationTests {
 

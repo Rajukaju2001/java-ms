@@ -22,7 +22,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 
 @Import(TestcontainersConfiguration.class)
 @Transactional(propagation = NOT_SUPPORTED)
-@DataJpaTest
+@DataJpaTest(properties = "spring.cloud.config.enabled=false")
 public class PersistenceTests {
      @Autowired
   private ReviewRepository repository;

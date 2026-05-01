@@ -1,0 +1,70 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/review-db
+    username: user
+    password: pwd
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  cloud:
+    function:
+      definition: messageProcessor
+    stream:
+      default-binder: kafka
+      default:
+        content-type: application/json
+      bindings:
+        messageProcessor-in-0:
+          destination: reviews
+          group: reviewsGroup
+          consumer:
+            max-attempts: 3
+            back-off-initial-interval: 500
+            back-off-max-interval: 1000
+            back-off-multiplier: 2.0
+      kafka:
+        bindings:
+          messageProcessor-in-0:
+            consumer:
+              enable-dlq: true
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080
+spring.datasource.url: jdbc:postgresql://postgres/review-db
+
+---
+
+spring.config.activate.on-profile: streaming_partitioned
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        messageProcessor-in-0:
+          consumer:
+            partitioned: true
+            instance-count: 2
+
+---
+spring.config.activate.on-profile: streaming_instance_0
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        messageProcessor-in-0:
+          consumer:
+            instance-index: 0
+---
+spring.config.activate.on-profile: streaming_instance_1
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        messageProcessor-in-0:
+          consumer:
+            instance-index: 1

@@ -1,0 +1,8 @@
+spring.web.error.include-message: always
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+spring.cloud.stream.defaultBinder: kafka

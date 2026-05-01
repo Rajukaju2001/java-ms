@@ -30,7 +30,12 @@ import reactor.core.publisher.Mono;
 @SpringBootTest(
   webEnvironment = RANDOM_PORT,
   classes = {TestSecurityConfig.class},
-  properties = {"spring.main.allow-bean-definition-overriding=true", "eureka.client.enabled=false"})
+  properties = {
+    "spring.security.oauth2.resourceserver.jwt.issuer-uri=",
+    "spring.main.allow-bean-definition-overriding=true",
+    "eureka.client.enabled=false",
+    "spring.cloud.stream.defaultBinder=kafka",
+    "spring.cloud.config.enabled=false"})
 @Import({TestChannelBinderConfiguration.class})
 @AutoConfigureWebTestClient
 class MessagingTests {

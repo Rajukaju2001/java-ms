@@ -1,0 +1,39 @@
+app:
+  eureka-username: u
+  eureka-password: '{cipher}bf298f6d5f878b342f9e44bec08cb9ac00b4ce57e98316f030194a225fac89fb'
+  eureka-server: localhost
+  auth-server: localhost
+
+spring.kafka.bootstrap-servers: 127.0.0.1:9092
+
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://localhost:8443
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://auth-server:9999/oauth2/jwks
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: "http://${app.eureka-username}:${app.eureka-password}@${app.eureka-server}:8761/eureka/"
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5
+
+
+spring.cloud.stream.defaultBinder: kafka
+
+management.endpoint.health.show-details: "ALWAYS"
+management.endpoints.web.exposure.include: "*"
+
+---
+spring.config.activate.on-profile: docker
+
+spring.cloud.stream.kafka.binder.brokers: kafka
+
+app.eureka-server: eureka
+
+spring.kafka.bootstrap-servers: kafka:9092
+
+app:
+  eureka-server: eureka
+  auth-server: auth-server

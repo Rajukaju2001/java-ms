@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.boot.resttestclient.TestRestTemplate ;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = {"spring.cloud.config.enabled=false"})
 @AutoConfigureTestRestTemplate
 class EurekaServerApplicationTests {
 

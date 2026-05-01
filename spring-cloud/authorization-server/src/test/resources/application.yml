@@ -1,0 +1,2 @@
+spring.web.error.include-message: always
+

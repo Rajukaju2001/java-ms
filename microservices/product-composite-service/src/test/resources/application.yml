@@ -1,0 +1,26 @@
+api:
+  common:
+    version:
+    title:
+    description:
+    termsOfService:
+    license:
+    licenseUrl:
+    externalDocDesc:
+    externalDocUrl:
+    contact:
+      name:
+      url:
+      email:
+
+# CORRECT
+spring.cloud.stream:
+  defaultBinder: kafka
+  default.content-type: application/json
+  bindings:
+    products-out-0:
+      destination: products
+    recommendations-out-0:
+      destination: recommendations
+    reviews-out-0:
+      destination: reviews

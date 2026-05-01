@@ -34,6 +34,7 @@ repositories {
 dependencies {
 	implementation project(':api')
   	implementation project(':util')
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.boot:spring-boot-starter-kafka'
 	implementation 'org.springframework.cloud:spring-cloud-stream'
